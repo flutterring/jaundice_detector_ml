@@ -4,6 +4,16 @@ import os
 import numpy as np
 from sklearn.model_selection import train_test_split
 
+def augment_image(image):
+    """
+    Apply data augmentation to an image
+    """
+    image = tf.image.random_flip_left_right(image)
+    image = tf.image.random_brightness(image, 0.2)
+    image = tf.image.random_contrast(image, 0.8, 1.2)
+    image = tf.image.random_saturation(image, 0.8, 1.2)
+    return image
+
 def load_and_preprocess_data(csv_path, images_dir):
     """
     Load and preprocess the jaundice dataset
@@ -20,9 +30,6 @@ def load_and_preprocess_data(csv_path, images_dir):
     
     # Drop unnecessary columns
     df = df.drop(['gender', 'age(day)', 'weight'], axis=1, errors='ignore')
-    
-    # Map treatment values to labels
-    df["Treatment"] = df["Treatment"].map({0: "not_jaundiced", 1: "jaundiced"})
     
     # Get image names
     image_names = df['image_idx'].tolist()
@@ -52,7 +59,7 @@ def load_and_preprocess_data(csv_path, images_dir):
     
     # Prepare labels
     X = processed_images
-    y = df["Treatment"].map({"not_jaundiced": 0, "jaundiced": 1}).values
+    y = df["Treatment"]
     
     # Split data
     X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.30, stratify=y, random_state=42)
@@ -77,15 +84,15 @@ def create_tf_datasets(X_train, y_train, X_val, y_val, batch_size=32):
     Returns:
         tuple: (train_ds, val_ds)
     """
-    train_ds = tf.data.Dataset.from_tensor_slices((X_train, y_train)).batch(batch_size).prefetch(tf.data.AUTOTUNE)
-    val_ds = tf.data.Dataset.from_tensor_slices((X_val, y_val)).batch(batch_size).prefetch(tf.data.AUTOTUNE)
+    # Create training dataset with augmentation
+    train_ds = tf.data.Dataset.from_tensor_slices((X_train, y_train))
+    train_ds = train_ds.map(lambda x, y: (augment_image(x), y), num_parallel_calls=tf.data.AUTOTUNE)
+    train_ds = train_ds.batch(batch_size).prefetch(tf.data.AUTOTUNE)
+    
+    # Create validation dataset without augmentation
+    val_ds = tf.data.Dataset.from_tensor_slices((X_val, y_val))
+    val_ds = val_ds.batch(batch_size).prefetch(tf.data.AUTOTUNE)
     
     return train_ds, val_ds
 
-if __name__ == "__main__":
-    # Example usage
-    csv_path = "../jaundice_dataset/chd_jaundice_published_2.csv"
-    images_dir = "../jaundice_dataset/images"
-    
-    X_train, X_val, X_test, y_train, y_val, y_test = load_and_preprocess_data(csv_path, images_dir)
-    train_ds, val_ds = create_tf_datasets(X_train, y_train, X_val, y_val) 
+ 
