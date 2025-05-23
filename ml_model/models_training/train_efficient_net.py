@@ -107,8 +107,19 @@ def save_model(model, filepath):
         filepath (str): Path where to save the model
     """
     try:
+        # Save full model
         model.save(filepath)
-        print(f"✅ Model saved successfully to {filepath}")
+        print(f"✅ Full model saved successfully to {filepath}")
+        
+        # Convert and save TFLite model
+        tflite_path = filepath.replace('.h5', '.tflite')
+        converter = tf.lite.TFLiteConverter.from_keras_model(model)
+        tflite_model = converter.convert()
+        
+        with open(tflite_path, 'wb') as f:
+            f.write(tflite_model)
+        print(f"✅ TFLite model saved successfully to {tflite_path}")
+        
     except Exception as e:
         print(f"❌ Error saving model: {e}")
 
