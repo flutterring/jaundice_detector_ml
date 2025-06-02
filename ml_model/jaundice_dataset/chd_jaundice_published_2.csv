@@ -1,4 +1,4 @@
-patient_id,image_idx,gender,gestational_age,age(day),weight,blood(mg/dL),Treatment
+patient_id,image_idx,gender,gestational_age,age(day),weight,blood(mg/dL),jaundiced
 0003,0003-1.jpg,F,40,5.2,3280,3.9,0
 0003,0003-2.jpg,F,40,5.2,3280,3.9,0
 0003,0003-3.jpg,F,40,5.2,3280,3.9,0
