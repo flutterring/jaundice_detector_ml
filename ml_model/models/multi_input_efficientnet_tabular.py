@@ -19,8 +19,8 @@ sys.path.append(parent_dir)
 from utils.preprocessing import create_efficientnet_processor, SimpleTabularProcessor
 
 # === Configuration (Embedded) ===
-CSV_PATH = "../jaundice_dataset/chd_jaundice_published_2.csv"
-IMAGES_DIR = Path("D:/NU_Courses/semester_6/MI/NeoJaundice/images") # Absolute path
+CSV_PATH = "ml_model/jaundice_dataset/chd_jaundice_published_2.csv"
+IMAGES_DIR = Path("D:/CS Project/ML pro/NeoJaundice/NeoJaundice/images") # Absolute path
 MODEL_PATH_HEAD_ONLY = "../best_efficientnet_tabular_head_only.keras"
 MODEL_PATH_FINE_TUNED = "../best_efficientnet_tabular_fine_tuned.keras"
 

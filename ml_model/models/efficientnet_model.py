@@ -17,8 +17,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.preprocessing import create_efficientnet_processor # Uses 224x224 by default
 
 # === Configuration (Embedded) ===
-CSV_PATH = "../jaundice_dataset/chd_jaundice_published_2.csv"
-IMAGES_DIR = Path("D:/NU_Courses/semester_6/MI/NeoJaundice/images") # Absolute path
+CSV_PATH = "ml_model/jaundice_dataset/chd_jaundice_published_2.csv"
+IMAGES_DIR = Path("D:/CS Project/ML pro/NeoJaundice/NeoJaundice/images") # Absolute path
 MODEL_PATH_HEAD_ONLY = "../best_efficientnet_calibrated_head_only.keras"
 MODEL_PATH_FINE_TUNED = "../best_efficientnet_calibrated.keras"
 
