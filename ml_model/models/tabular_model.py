@@ -14,7 +14,7 @@ from utils.preprocessing import SimpleTabularProcessor
 
 # === Configuration (Embedded) ===
 # Adjusted path relative to this model file (models/)
-CSV_PATH = "../jaundice_dataset/chd_jaundice_published_2.csv" 
+CSV_PATH = "ml_model/jaundice_dataset/chd_jaundice_published_2.csv" 
 MODEL_PATH = "../best_tabular_model.keras" # Save in ml_model root
 
 # Tabular features based on user input
@@ -73,11 +73,8 @@ class TabularJaundiceDetector:
         X_tabular_raw = df[all_feature_cols]
         y = df[TARGET_COL].values
 
-        X_tabular = self.tabular_processor.fit_transform(X_tabular_raw, CATEGORICAL_COLS, NUMERICAL_COLS)
-        self.input_shape = X_tabular.shape[1]
-        
-        print(f"✅ Tabular data loaded and processed. Input shape: ({self.input_shape},)")
-        return X_tabular, y
+        # Do NOT fit/transform here; just return raw features and labels
+        return X_tabular_raw, y
 
     def train_model(self, X_train, y_train, X_val, y_val):
         if self.model is None:
@@ -133,10 +130,19 @@ def test_tabular_model():
     print("=" * 60)
 
     detector = TabularJaundiceDetector()
-    X_tabular, y = detector.load_and_preprocess_data(CSV_PATH)
+    X_tabular_raw, y = detector.load_and_preprocess_data(CSV_PATH)
 
-    X_train, X_temp, y_train, y_temp = train_test_split(X_tabular, y, test_size=0.3, random_state=42, stratify=y)
-    X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42, stratify=y_temp)
+    X_train_raw, X_temp_raw, y_train, y_temp = train_test_split(
+        X_tabular_raw, y, test_size=0.3, random_state=42, stratify=y)
+    X_val_raw, X_test_raw, y_val, y_test = train_test_split(
+        X_temp_raw, y_temp, test_size=0.5, random_state=42, stratify=y_temp)
+
+    # Fit processor only on training data, then transform all splits
+    detector.tabular_processor.fit(X_train_raw, CATEGORICAL_COLS, NUMERICAL_COLS)
+    X_train = detector.tabular_processor.transform(X_train_raw, CATEGORICAL_COLS, NUMERICAL_COLS)
+    X_val = detector.tabular_processor.transform(X_val_raw, CATEGORICAL_COLS, NUMERICAL_COLS)
+    X_test = detector.tabular_processor.transform(X_test_raw, CATEGORICAL_COLS, NUMERICAL_COLS)
+    detector.input_shape = X_train.shape[1]
 
     print(f"\nDataset Summary:")
     print(f"Train: {len(X_train)}, Val: {len(X_val)}, Test: {len(X_test)}")
@@ -149,4 +155,4 @@ def test_tabular_model():
     return detector, accuracy
 
 if __name__ == "__main__":
-    test_tabular_model() 
+    test_tabular_model()

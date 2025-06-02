@@ -18,9 +18,10 @@ sys.path.append(parent_dir)
 from utils.preprocessing import create_cnn_processor, SimpleTabularProcessor
 
 # === Configuration (Embedded) ===
-CSV_PATH = "../jaundice_dataset/chd_jaundice_published_2.csv"
-IMAGES_DIR = Path("D:/NU_Courses/semester_6/MI/NeoJaundice/images") # Absolute path
-MODEL_PATH = "../best_cnn_tabular_model.keras"
+SCRIPT_DIR = Path(__file__).resolve().parent
+CSV_PATH = SCRIPT_DIR.parent / "jaundice_dataset/chd_jaundice_published_2.csv"
+IMAGES_DIR = Path("D:/CS Project/ML pro/NeoJaundice/NeoJaundice/images") # Absolute path
+MODEL_PATH = SCRIPT_DIR.parent / "best_cnn_tabular_model.keras"
 
 # Image Config
 IMG_SIZE_CNN = (128, 128)
@@ -113,7 +114,7 @@ class MultiInputCNNTabularDetector:
         # Fit tabular processor on the whole tabular dataset subset first
         X_tabular_raw_full = df[all_tabular_cols]
         self.tabular_processor.fit(X_tabular_raw_full, CATEGORICAL_COLS, NUMERICAL_COLS)
-        self.tabular_input_shape = self.tabular_processor.transform(X_tabular_raw_full.iloc[[0]] ).shape[1] # Get shape from one sample
+        self.tabular_input_shape = self.tabular_processor.transform(X_tabular_raw_full.iloc[[0]], CATEGORICAL_COLS, NUMERICAL_COLS).shape[1] # Get shape from one sample
         print(f"🛠️ Tabular processor fitted. Expected tabular input shape: ({self.tabular_input_shape},)")
 
         for idx, row in df.iterrows():
@@ -126,7 +127,7 @@ class MultiInputCNNTabularDetector:
                 
                 # Process tabular data for this row
                 tabular_row_raw = pd.DataFrame([row[all_tabular_cols]])
-                tabular_data = self.tabular_processor.transform(tabular_row_raw)
+                tabular_data = self.tabular_processor.transform(tabular_row_raw, CATEGORICAL_COLS, NUMERICAL_COLS)
                 tabular_processed.append(tabular_data.flatten()) # Flatten to 1D array
                 
                 labels.append(row[TARGET_COL])
@@ -252,4 +253,4 @@ def test_multi_input_cnn_tabular_model():
     return detector, accuracy
 
 if __name__ == "__main__":
-    test_multi_input_cnn_tabular_model() 
+    test_multi_input_cnn_tabular_model()

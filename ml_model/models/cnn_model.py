@@ -17,8 +17,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.preprocessing import create_cnn_processor # Uses 128x128 by default
 
 # === Configuration (Embedded) ===
-CSV_PATH = "../jaundice_dataset/chd_jaundice_published_2.csv"
-IMAGES_DIR = Path("D:/NU_Courses/semester_6/MI/NeoJaundice/images") # Absolute path
+CSV_PATH = "ml_model/jaundice_dataset/chd_jaundice_published_2.csv"
+IMAGES_DIR = Path("D:/CS Project/ML pro/NeoJaundice/NeoJaundice/images") # Absolute path
 MODEL_PATH = "../best_cnn_calibrated.keras"
 
 # Hyperparameters
