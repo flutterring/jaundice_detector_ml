@@ -23,7 +23,7 @@ MODEL_PATH = "../best_cnn_calibrated.keras"
 
 # Hyperparameters
 IMG_SIZE_CNN = (128, 128) # Explicitly defined, though create_cnn_processor defaults to this
-EPOCHS_CNN = 25
+EPOCHS_CNN = 30
 BATCH_SIZE = 32
 LEARNING_RATE_CNN = 0.0005
 

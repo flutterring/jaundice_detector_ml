@@ -33,7 +33,7 @@ NUMERICAL_COLS = ['gestational_age', 'age(day)', 'weight', 'blood(mg/dL)']
 TARGET_COL = 'jaundiced'
 
 # Training Hyperparameters
-EPOCHS = 25
+EPOCHS = 30
 BATCH_SIZE = 32
 LEARNING_RATE = 0.0005
 
